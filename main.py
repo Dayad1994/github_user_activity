@@ -42,29 +42,12 @@ class Event(TypedDict):
     org: EventOrg | None
 
 
-def sort_create_events(events: list[Event]):
-    '''Сортировка событий CreateEvent.
-    
-    При создании репозитория генерируются два события: создание репозитория и создание главной ветки.
-    Бывает, что у этих двух событий одна временная метка.
-    И в таком случае github возвращает эти события отсортировав по имени события.
-    А для корректного отображения событий важен логический порядок: репозиторий, ветка, тег. 
-    '''
-    
-    def inner_sort():
-        for i in range(1, len(events)):
-            event = events[i]
-            prev_event = events[i - 1]
-            if event['type'] == 'CreateEvent' and prev_event['type'] == 'CreateEvent':
-                if event['created_at'] == prev_event['created_at']:
-                    if event['payload']['ref_type'] == 'branch' and prev_event['payload']['ref_type'] == 'repository':
-                        events[i], events[i-1] = events[i-1], events[i]
-                    elif event['payload']['ref_type'] == 'tag' and prev_event['payload']['ref_type'] == 'branch':
-                        events[i], events[i-1] = events[i-1], events[i]
-                    elif event['payload']['ref_type'] == 'tag' and prev_event['payload']['ref_type'] == 'repository':
-                        events[i], events[i-1] = events[i-1], events[i]
-    inner_sort()
-    inner_sort()
+TYPE_WEIGHTS = {
+    'tag': 0,
+    'branch': 1,
+    'repository': 2,
+    '': 3
+}
 
 
 def main(url: str = 'https://api.github.com/users/{username}/events',
@@ -96,6 +79,37 @@ def main(url: str = 'https://api.github.com/users/{username}/events',
             
             same_events_count = 0
             pushevent_repo_name = None
+
+
+def sort_create_events(events: list[Event]):
+    '''Сортировка событий CreateEvent.
+    
+    При создании репозитория генерируются два события: создание репозитория и создание главной ветки.
+    Бывает, что у этих двух событий одна временная метка.
+    И в таком случае github возвращает эти события отсортировав по имени события.
+    А для корректного отображения событий важен логический порядок: репозиторий, ветка, тег. 
+    '''
+
+    for index in range(2, len(events)):
+        triple_e = events[index - 2:index + 1]
+
+        triple_e_types = [e['type'] for e in triple_e]
+        triple_e_dates = [e['created_at'] for e in triple_e]
+
+        if triple_e_types.count('CreateEvent') <= 1:
+            continue
+
+        if len(set(triple_e_dates)) == 3:
+            continue
+
+        triple_e.sort(key=_get_create_event_sort_key)
+        events[index - 2:index + 1] = triple_e
+
+
+def _get_create_event_sort_key(event):
+    event_date = event['created_at']
+    event_ref_type = event['payload'].get('ref_type', '')
+    return event_date, TYPE_WEIGHTS[event_ref_type]
 
 
 def print_event(event, commit_count=0):
