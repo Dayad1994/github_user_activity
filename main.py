@@ -1,8 +1,56 @@
 import requests
 import sys
 
+from typing import TypedDict
 
-def sort_create_events(events):
+
+class EventActor(TypedDict):
+    id: int
+    login: str
+    display_login: str
+    gravatar_id: str
+    url: str
+    avatart_url: str
+
+
+class EventRepo(TypedDict):
+    id: int
+    name: str
+    url: str
+
+
+class EventOrg(TypedDict):
+    id: int
+    login: str
+    gravatar_id: str
+    url: str
+    avatart_url: str
+
+
+class EventPayload(TypedDict):
+    ...
+
+
+class Event(TypedDict):
+    id: int
+    type: str
+    actor: EventActor
+    repo: EventRepo
+    payload: EventPayload
+    public: bool
+    created_at: str
+    org: EventOrg | None
+
+
+def sort_create_events(events: list[Event]):
+    '''Сортировка событий CreateEvent.
+    
+    При создании репозитория генерируются два события: создание репозитория и создание главной ветки.
+    Бывает, что у этих двух событий одна временная метка.
+    И в таком случае github возвращает эти события отсортировав по имени события.
+    А для корректного отображения событий важен логический порядок: репозиторий, ветка, тег. 
+    '''
+    
     def inner_sort():
         for i in range(1, len(events)):
             event = events[i]
@@ -22,7 +70,7 @@ def sort_create_events(events):
 def main(url: str = 'https://api.github.com/users/{username}/events',
          username: str = 'sobolevn'):
     full_url = url.format(username=username)
-    events = requests.get(full_url).json()
+    events: list[Event] = requests.get(full_url).json()
     
     sort_create_events(events)
     
