@@ -2,8 +2,8 @@
 
 import requests
 
-from github_user_activity.event_types import Event
+from github_user_activity.event_types import GroupedEvents
 
 
-def fetch_events(url: str) -> list[Event]:
+def fetch_events(url: str) -> GroupedEvents:
     return requests.get(url).json()

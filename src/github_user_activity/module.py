@@ -1,12 +1,12 @@
-from event_types import Event
+from github_user_activity.event_types import Event, GroupedEvents
 
 
-def parse_events(events: list[Event]):
+def parse_events(events: GroupedEvents):
     sort_create_events(events)
     group_push_events(events)
 
 
-def sort_create_events(events: list[Event]) -> None:
+def sort_create_events(events: GroupedEvents) -> None:
     '''Сортировка событий CreateEvent.
 
     При создании репозитория генерируются два события или три, если задать ещё тег:
@@ -49,7 +49,7 @@ def _get_create_event_sort_key(event: Event) -> tuple[str, int]:
     return event_date, type_weights[event_ref_type]
 
 
-def group_push_events(events: list[Event]) -> None:
+def group_push_events(events: GroupedEvents) -> None:
     '''Group same repository's push events.
     
     Изменяет список событий тем, что подряд идущие push события в один репозиторий заменяются кортежем,
@@ -62,7 +62,7 @@ def group_push_events(events: list[Event]) -> None:
     pushevent_repo_name: str = None
     pushevent: Event
     same_event_count: int = 0
-    new_events: list[Event | tuple[Event, int]] = []
+    new_events: GroupedEvents = []
     
     for index in range(len(events)):
         event = events[index]

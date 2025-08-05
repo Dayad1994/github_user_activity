@@ -1,7 +1,7 @@
 import sys
 
 from github_user_activity.fetcher import fetch_events
-from github_user_activity.event_types import Event
+from github_user_activity.event_types import GroupedEvents
 from github_user_activity.module import parse_events
 from github_user_activity.view import print_events
 
@@ -14,7 +14,7 @@ def main() -> None:
 
     username: str = _get_username()
     full_url: str = URL.format(username=username)
-    events: list[Event] = fetch_events(full_url)
+    events: GroupedEvents = fetch_events(full_url)
     parse_events(events)
     print_events(events)
 

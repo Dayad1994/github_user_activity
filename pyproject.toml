@@ -4,14 +4,10 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = [
-    "requests>=2.32.4",
-]
+dependencies = ["requests>=2.32.4"]
 
 [project.scripts]
-github-activity = "main:main"
+gua = "github_user_activity.main:main"
 
 [dependency-groups]
-dev = [
-    "ruff>=0.12.5",
-]
+dev = ["ruff>=0.12.5"]

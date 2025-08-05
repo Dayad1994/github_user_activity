@@ -10,7 +10,7 @@ class EventActor(TypedDict):
     display_login: str
     gravatar_id: str
     url: str
-    avatart_url: str
+    avatar_url: str
 
 
 class EventRepo(TypedDict):
@@ -24,7 +24,7 @@ class EventOrg(TypedDict):
     login: str
     gravatar_id: str
     url: str
-    avatart_url: str
+    avatar_url: str
 
 
 class EventPayload(TypedDict):
@@ -40,6 +40,9 @@ class Event(TypedDict):
     public: bool
     created_at: str
     org: EventOrg | None
+
+
+GroupedEvents = list[Event | tuple[Event, int]]
 
 
 class EventType(str, Enum):

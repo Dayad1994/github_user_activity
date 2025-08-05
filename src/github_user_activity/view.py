@@ -1,6 +1,6 @@
 from typing import Callable
 
-from github_user_activity.event_types import Event
+from github_user_activity.event_types import Event, GroupedEvents
 from github_user_activity import handlers
 
 
@@ -25,7 +25,7 @@ EVENT_HANDLERS: dict[str, Callable[[], None]] = {
     }
 
 
-def print_events(events: list[Event | tuple[Event, int]]) -> None:
+def print_events(events: GroupedEvents) -> None:
     '''Print all events.
     
     В зависимости от типа (event или кортеж(event, count)) очередного элемента списка
