@@ -28,7 +28,7 @@ class EventOrg(TypedDict):
 
 
 class EventPayload(TypedDict):
-    ...
+    ref_type: str
 
 
 class Event(TypedDict):
@@ -44,7 +44,7 @@ class Event(TypedDict):
 
 GroupedEvents = list[Event | tuple[Event, int]]
 
-
+'''
 class EventType(str, Enum):
     Push = 'CommitCommentEvent'
     Create = 'CreateEvent'
@@ -62,4 +62,4 @@ class EventType(str, Enum):
     Release = 'ReleaseEvent'
     Sponsorship = 'SponsorshipEvent'
     Watch = 'WatchEvent'
-    
+'''

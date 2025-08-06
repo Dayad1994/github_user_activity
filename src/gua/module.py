@@ -1,4 +1,4 @@
-from gua.event_types import Event, GroupedEvents
+from gua.typing import Event, GroupedEvents
 
 
 def parse_events(events: GroupedEvents):
@@ -21,20 +21,38 @@ def sort_create_events(events: GroupedEvents) -> None:
     for index in range(2, len(events)):
         triple_e = events[index - 2:index + 1]
 
-        triple_e_types = [e['type'] for e in triple_e]
-        triple_e_dates = [e['created_at'] for e in triple_e]
+        # Фильтруем create events в тройке
+        create_events = [(i, e) for i, e in enumerate(triple_e) if e['type'] == 'CreateEvent']
 
-        if triple_e_types.count('CreateEvent') <= 1:
+        if len(create_events) <= 1:
             continue
 
-        if len(set(triple_e_dates)) == 3:
-            continue
+        # Группируем create_events по дате
+        from collections import defaultdict
 
-        triple_e.sort(key=_get_create_event_sort_key)
-        events[index - 2:index + 1] = triple_e
+        date_groups = defaultdict(list)
+        for i, e in create_events:
+            date_groups[e['created_at']].append((i, e))
+
+        # Обрабатываем только те группы, где 2 и более события с одинаковой датой
+        triple_e_list = list(triple_e)  # копия
+
+        for same_date_events in date_groups.values():
+            if len(same_date_events) < 2:
+                continue  # группа слишком мала для сортировки
+
+            # сортируем события этой группы по ключу
+            sorted_group = sorted(same_date_events, key=lambda pair: get_create_event_sort_key(pair[1]))
+
+            # меняем местами в triple_e_list только в позициях этой группы
+            for (pos, _), (_, sorted_event) in zip(same_date_events, sorted_group):
+                triple_e_list[pos] = sorted_event
+
+        # Записываем обратно в исходный список
+        events[index - 2:index + 1] = triple_e_list
 
 
-def _get_create_event_sort_key(event: Event) -> tuple[str, int]:
+def get_create_event_sort_key(event: Event) -> tuple[str, int]:
     '''Get key for sorting create events in triple.'''
     
     type_weights = {

@@ -1,7 +1,7 @@
 from typing import Callable
 
 from gua import handlers
-from gua.event_types import Event, GroupedEvents
+from gua.typing import Event, GroupedEvents
 
 
 # Сопоставление типов событий и обработчиков

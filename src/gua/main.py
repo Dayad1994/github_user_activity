@@ -1,6 +1,6 @@
 import sys
 
-from gua.event_types import GroupedEvents
+from gua.typing import GroupedEvents
 from gua.fetcher import fetch_events
 from gua.module import parse_events
 from gua.view import print_events
