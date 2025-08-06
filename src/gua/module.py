@@ -5,6 +5,10 @@ from gua.typing import Event, GroupedEvents
 
 def parse_events(events: GroupedEvents) -> None:
     """Sorting and grouping original event list."""
+    if isinstance(events, str):
+        return
+    if not events:
+        return
     sort_create_events(events)
     group_push_events(events)
 

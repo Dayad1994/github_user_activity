@@ -33,6 +33,13 @@ def print_events(events: GroupedEvents) -> None:
     очередного элемента списка вызывается print_event()
     с одним или двумя аргументами.
     """
+    if not events:
+        print('This user have not any events.')
+        return
+    if isinstance(events, str):
+        print(events)
+        return
+
     for event in events:
         if isinstance(event, tuple):
             print_event(event=event[0], commit_count=event[1])
