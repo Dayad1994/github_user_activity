@@ -1,7 +1,7 @@
 from typing import Callable
 
-from github_user_activity.event_types import Event, GroupedEvents
-from github_user_activity import handlers
+from gua import handlers
+from gua.event_types import Event, GroupedEvents
 
 
 # Сопоставление типов событий и обработчиков

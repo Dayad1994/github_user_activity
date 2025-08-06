@@ -2,7 +2,7 @@
 
 import requests
 
-from github_user_activity.event_types import GroupedEvents
+from gua.event_types import GroupedEvents
 
 
 def fetch_events(url: str) -> GroupedEvents:

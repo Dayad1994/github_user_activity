@@ -7,7 +7,21 @@ requires-python = ">=3.13"
 dependencies = ["requests>=2.32.4"]
 
 [project.scripts]
-gua = "github_user_activity.main:main"
+gua = "gua.main:main"
 
 [dependency-groups]
 dev = ["ruff>=0.12.5"]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.ruff]
+line-length = 80
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "B", "I", "N", "S", "C90", "D", "ANN", "SIM", "ARG", "PL"]

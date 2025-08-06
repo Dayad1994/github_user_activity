@@ -1,9 +1,9 @@
 import sys
 
-from github_user_activity.fetcher import fetch_events
-from github_user_activity.event_types import GroupedEvents
-from github_user_activity.module import parse_events
-from github_user_activity.view import print_events
+from gua.event_types import GroupedEvents
+from gua.fetcher import fetch_events
+from gua.module import parse_events
+from gua.view import print_events
 
 
 URL = 'https://api.github.com/users/{username}/events'

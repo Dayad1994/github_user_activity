@@ -1,4 +1,4 @@
-from github_user_activity.event_types import Event, GroupedEvents
+from gua.event_types import Event, GroupedEvents
 
 
 def parse_events(events: GroupedEvents):
@@ -59,8 +59,8 @@ def group_push_events(events: GroupedEvents) -> None:
     Changed events: [event, (push_event, push_event_count), event, ...]
     '''
 
-    pushevent_repo_name: str = None
-    pushevent: Event
+    pushevent_repo_name: str | None = None
+    pushevent: Event | None = None
     same_event_count: int = 0
     new_events: GroupedEvents = []
     
