@@ -1,3 +1,4 @@
+"""Vew module prints event description."""
 from typing import Callable
 
 from gua import handlers
@@ -26,12 +27,12 @@ EVENT_HANDLERS: dict[str, Callable[[], None]] = {
 
 
 def print_events(events: GroupedEvents) -> None:
-    '''Print all events.
+    """Print all events.
     
-    В зависимости от типа (event или кортеж(event, count)) очередного элемента списка
-    вызывается print_event() с одним или двумя аргументами.
-    '''
-
+    В зависимости от типа (event или кортеж(event, count))
+    очередного элемента списка вызывается print_event()
+    с одним или двумя аргументами.
+    """
     for event in events:
         if isinstance(event, tuple):
             print_event(event=event[0], commit_count=event[1])
@@ -41,11 +42,11 @@ def print_events(events: GroupedEvents) -> None:
 
 def print_event(event: Event, commit_count: int = 0) -> None:
     """Print event short description."""
-
     event_type = event['type']
     repo_name = event['repo']['name']
     payload = event.get('payload', {})
 
+    # Handle PushEvent
     if commit_count:
         commit_word = "commit" if commit_count == 1 else "commits"
         print(f"Pushed {commit_count} {commit_word} to {repo_name}")
@@ -53,7 +54,8 @@ def print_event(event: Event, commit_count: int = 0) -> None:
 
     # Вызов обработчика или вывод по умолчанию
     handler = EVENT_HANDLERS.get(event_type)
+
     if handler:
-        handler(payload, repo_name)
+        print(handler(payload, repo_name))
     else:
         print(event_type, repo_name)

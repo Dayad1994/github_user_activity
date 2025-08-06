@@ -1,6 +1,5 @@
 """Type hints module."""
 
-from enum import Enum
 from typing import TypedDict
 
 
@@ -43,23 +42,3 @@ class Event(TypedDict):
 
 
 GroupedEvents = list[Event | tuple[Event, int]]
-
-'''
-class EventType(str, Enum):
-    Push = 'CommitCommentEvent'
-    Create = 'CreateEvent'
-    Delete = 'DeleteEvent'
-    Fork = 'ForkEvent'
-    Gollum = 'GollumEvent'
-    IssueComment = 'IssueCommentEvent'
-    Issues = 'IssuesEvent'
-    Member = 'MemberEvent'
-    Public = 'PublicEvent'
-    PullRequest = 'PullRequestEvent'
-    PullRequestReview = 'PullRequestReviewEvent'
-    PullRequestReviewComment = 'PullRequestReviewCommentEvent'
-    PullRequestReviewThread = 'PullRequestReviewThreadEvent'
-    Release = 'ReleaseEvent'
-    Sponsorship = 'SponsorshipEvent'
-    Watch = 'WatchEvent'
-'''

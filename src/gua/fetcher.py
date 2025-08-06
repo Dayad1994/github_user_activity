@@ -6,4 +6,5 @@ from gua.typing import GroupedEvents
 
 
 def fetch_events(url: str) -> GroupedEvents:
-    return requests.get(url).json()
+    """Get last github user events."""
+    return requests.get(url, timeout=(3.05, 10)).json()

@@ -4,28 +4,32 @@ from gua.typing import Event, GroupedEvents
 
 
 def parse_events(events: GroupedEvents) -> None:
-    '''Some func.'''
+    """Sorting and grouping original event list."""
     sort_create_events(events)
     group_push_events(events)
 
 
 def sort_create_events(events: GroupedEvents) -> None:
-    '''Сортировка событий CreateEvent.
+    """Сортировка событий CreateEvent.
 
-    При создании репозитория генерируются два события или три, если задать ещё тег:
-    создание репозитория и создание главной ветки. Бывает, что у этих событий одна временная метка.
-    И в таком случае github возвращает эти события отсортировав по имени события.
-    А для корректного отображения событий важен логический порядок: репозиторий, ветка, тег.
+    При создании репозитория генерируются два события или
+    три, если задать ещё тег: создание репозитория и создание главной ветки.
+    Бывает, что у этих событий одна временная метка. И в таком случае github
+    возвращает эти события отсортировав по имени события.
+    А для корректного отображения событий важен логический порядок:
+    репозиторий, ветка, тег.
     
-    Список событий перебирается группой по три подряд идущих события. Если в этой группе есть события
-    CreateEvent с одинаковой временной веткой, то эта группа сортируется.
-    '''
-
+    Список событий перебирается группой по три подряд идущих события.
+    Если в этой группе есть события CreateEvent с одинаковой временной меткой,
+    то эта группа сортируется.
+    """
     for index in range(2, len(events)):
         triple_e = events[index - 2:index + 1]
 
         # Фильтруем create events в тройке
-        create_events = [(i, e) for i, e in enumerate(triple_e) if e['type'] == 'CreateEvent']
+        create_events = [
+            (i, e) for i, e in enumerate(triple_e) if e['type'] == 'CreateEvent'
+            ]
 
         if len(create_events) <= 1:
             continue
@@ -35,7 +39,7 @@ def sort_create_events(events: GroupedEvents) -> None:
         for i, e in create_events:
             date_groups[e['created_at']].append((i, e))
 
-        # Обрабатываем только те группы, где 2 и более события с одинаковой датой
+        # Обрабатываем те группы, где 2 и более события с одинаковой датой
         triple_e_list = list(triple_e)
 
         for same_date_events in date_groups.values():
@@ -47,7 +51,11 @@ def sort_create_events(events: GroupedEvents) -> None:
                 key=lambda pair: get_create_event_sort_key(pair[1]))
 
             # меняем местами в triple_e_list только в позициях этой группы
-            for (pos, _), (_, sorted_event) in zip(same_date_events, sorted_group):
+            for (pos, _), (_, sorted_event) in zip(
+                same_date_events,
+                sorted_group,
+                strict=False
+                ):
                 triple_e_list[pos] = sorted_event
 
         # Записываем обратно в исходный список
@@ -55,8 +63,7 @@ def sort_create_events(events: GroupedEvents) -> None:
 
 
 def get_create_event_sort_key(event: Event) -> tuple[str, int]:
-    '''Get key for sorting create events in triple.'''
-    
+    """Get key for sorting create events in triple."""
     type_weights = {
     'tag': 0,
     'branch': 1,
@@ -70,15 +77,16 @@ def get_create_event_sort_key(event: Event) -> tuple[str, int]:
 
 
 def group_push_events(events: GroupedEvents) -> None:
-    '''Group same repository's push events.
+    """Group same repository's push events.
     
-    Изменяет список событий тем, что подряд идущие push события в один репозиторий заменяются кортежем,
-    где первый элемент это одно из событий, второй - количество этих событий.
+    Изменяет список событий тем,
+    что подряд идущие push события в один репозиторий заменяются кортежем,
+    где первый элемент это одно из событий,
+    второй - количество этих событий.
     
     Original events: [event, event, ...]
     Changed events: [event, (push_event, push_event_count), event, ...]
-    '''
-
+    """
     pushevent_repo_name: str | None = None
     pushevent: Event | None = None
     same_event_count: int = 0
