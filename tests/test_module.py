@@ -2,12 +2,14 @@ from gua.module import sort_create_events, group_push_events, get_create_event_s
 from gua.typing import Event
 
 
-def make_event(event_type, created_at, ref_type):
+def make_event(
+    event_type, created_at='2023-01-01T00:00:00Z',
+    ref_type='', repo_name='repo'):
     return {
         'id': 1,
         'type': event_type,
         'actor': {'id': 1, 'login': 'user', 'display_login': 'user', 'gravatar_id': '', 'url': '', 'avatar_url': ''},
-        'repo': {'id': 1, 'name': 'repo', 'url': ''},
+        'repo': {'id': 1, 'name': repo_name, 'url': ''},
         'payload': {'ref_type': ref_type},
         'public': True,
         'created_at': created_at,
@@ -59,4 +61,28 @@ def test_sort_create_events():
 
 
 def test_group_push_events():
-    ...
+    events = [
+        make_event('CreateEvent', repo_name='repo1'),
+        make_event('PushEvent', repo_name='repo1'),
+        make_event('PushEvent', repo_name='repo1'),
+        make_event('PushEvent', repo_name='repo1'),
+        make_event('PushEvent', repo_name='repo2'),
+        make_event('CreateEvent', repo_name='repo2'),
+        make_event('PushEvent', repo_name='repo2'),
+        make_event('PushEvent', repo_name='repo2'),
+        make_event('PushEvent', repo_name='repo3'),
+    ]
+
+    copy_events = list(events)
+    must_events = [
+        copy_events[0],
+        (copy_events[1], 3),
+        (copy_events[4], 1),
+        copy_events[5],
+        (copy_events[6], 2),
+        (copy_events[-1], 1)
+        ]
+    
+    group_push_events(events)
+    
+    assert events == must_events

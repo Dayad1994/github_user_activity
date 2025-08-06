@@ -1,7 +1,10 @@
+from collections import defaultdict
+
 from gua.typing import Event, GroupedEvents
 
 
-def parse_events(events: GroupedEvents):
+def parse_events(events: GroupedEvents) -> None:
+    '''Some func.'''
     sort_create_events(events)
     group_push_events(events)
 
@@ -28,21 +31,20 @@ def sort_create_events(events: GroupedEvents) -> None:
             continue
 
         # Группируем create_events по дате
-        from collections import defaultdict
-
         date_groups = defaultdict(list)
         for i, e in create_events:
             date_groups[e['created_at']].append((i, e))
 
         # Обрабатываем только те группы, где 2 и более события с одинаковой датой
-        triple_e_list = list(triple_e)  # копия
+        triple_e_list = list(triple_e)
 
         for same_date_events in date_groups.values():
             if len(same_date_events) < 2:
-                continue  # группа слишком мала для сортировки
+                continue
 
-            # сортируем события этой группы по ключу
-            sorted_group = sorted(same_date_events, key=lambda pair: get_create_event_sort_key(pair[1]))
+            sorted_group = sorted(
+                same_date_events,
+                key=lambda pair: get_create_event_sort_key(pair[1]))
 
             # меняем местами в triple_e_list только в позициях этой группы
             for (pos, _), (_, sorted_event) in zip(same_date_events, sorted_group):
@@ -99,7 +101,9 @@ def group_push_events(events: GroupedEvents) -> None:
             same_event_count = 0
             pushevent_repo_name = None
             new_events.append(event)
-    
+    if same_event_count:
+        new_events.append((pushevent, same_event_count))
+
     # Change events to new items
     events.clear()
     events.extend(new_events)
